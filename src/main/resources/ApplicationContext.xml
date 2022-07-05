@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!--目标对象-->
+    <bean id="testDao" class="dao.TestDaoImpl"/>
+    <!--创建切面-->
+    <bean id="myAspect" class="aspect.Myaspect2"/>
+    <!--定义代理对象-->
+    <bean id="testDaoProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <!--实现的接口-->
+        <property name="proxyInterfaces" value="dao.TestDao"/>
+        <!--目标对象-->
+        <property name="target" ref="testDao"/>
+        <!--织入-->
+        <property name="interceptorNames" value="myAspect"/>
+        <!--指定代理方式-->
+        <property name="proxyTargetClass" value="true"/>
+    </bean>
+
+    <!--定义目标对象-->
+    <bean id="testDao1" class="dao.TestDaoImpl"/>
+    <!--定义切面-->
+    <bean id="myAspect1" class="aspect.Myaspect3"/>
+    <aop:config>
+        <!--配置切面-->
+        <aop:aspect ref="myAspect1">
+            <aop:pointcut id="myPoinCut" expression="execution(* dao.*.*(..))"/>
+            <aop:around method="around" pointcut-ref="myPoinCut"/>
+        </aop:aspect>
+    </aop:config>
+
+</beans>
